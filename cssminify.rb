@@ -1,19 +1,16 @@
 class CSS
-
-	def initialize(file_name)
-		@file_name = file_name
+	def initialize(file)
+		@file_name = file
+		@file_name_min = file.clone.gsub(/(.css)/, "")
+		clean_file
 	end	
 
-	def open_file
-		@css = File.open(@file_name, "r+").each_line do |line|
-			minify(line)
+	def clean_file
+		@mincss = File.open("#{@file_name_min}.min.css", "w")
+		File.open(@file_name, "r") do |line|
+			line.each_line { |f| @mincss.puts(f.gsub(/\s+/, ""))}
 		end
 	end
-
-	def minify(line)
-		minified = line.gsub(/\s+/, "")
-	end
 end
-
 # Edit 'style.css' to your CSS file name.
-stylesheet = CSS.new('style.css')
+CSS::new('style.css')
