@@ -1,4 +1,4 @@
-require "mincss/version"
+require 'mincss/version'
 
 module Mincss
   class CSS
@@ -12,7 +12,10 @@ module Mincss
   		@mincss = File.open("#{@file_name_min}.min.css", "w")
   		File.open(@file_name, "r") do |file|
   			file.each_line do |line|
-  				line.each_line { |f| @mincss.print(f.gsub(/\s+/, ""))}
+  				line.each_line do |part|
+            @mincss.print part
+            @mincss.print " " if part[/\w/]
+          end
   			end
   		end
   	end 
