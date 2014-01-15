@@ -18,8 +18,13 @@ module Mincss
   	end 
   end
 
+  begin
   # Edit 'style.css' to your CSS file name.
-  CSS::new('style.css')
+    filename = 'style.css'
+    CSS::new(filename)
+  rescue
+    p "File not found."
+  end
   
   # This code doesn't belong here. Move to separate file in the future.
 end
