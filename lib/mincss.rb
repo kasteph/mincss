@@ -3,47 +3,48 @@ require_relative "./mincss/base"
 
 module Mincss
   class Minimizer
-  	def initialize(file)
-  		@file_name = file
-  		@file_name_min = file.clone.gsub(/(.css)/, "")
+  	def initialize(filename)
+  		@filename = filename
+  		@filename_min = filename.clone.gsub(/(.css)/, '')
       @inside_property = false
       @inside_selector = false
   		clean_file
   	end	
 
   	def clean_file
-  		text = File.read(@file_name)    
-      
-      formatted = remove_tabs(text)
-      formatted = remove_newlines(formatted)
-      
+  		content = File.read(@filename)          
+      formatted = remove_tabs(content)
+      formatted = remove_newlines(formatted)      
       # reduce all spaces to one space for initial processing.
-      text.gsub!(/\s+/, ' ')
-      
+      content.gsub!(/\s+/, ' ')      
       formatted = remove_whitespace(formatted)
       
-      File.open("#{@file_name_min}.min.css", 'w') do |file|
-        file.write(formatted)
-      end
+      write_file(formatted)
   	end 
     
-    def remove_tabs(text)
-      text.gsub!("\t", "")
-    end
-        
-    def remove_newlines(text)
-      text.gsub!("\n", "")
-      text
+    def write_file(content)  
+      File.open("#{@filename_min}.min.css", 'w') do |file|
+        file.write(content)
+      end
     end
     
-    def remove_whitespace(text)
+    def remove_tabs(content)
+      content.gsub!("\t", "")
+    end
+        
+    def remove_newlines(content)
+      content.gsub!("\n", "")
+      content
+    end
+    
+    def remove_whitespace(content)
       formatted = ""
       char = ""
       last_char = ""
       
-      for i in 0...text.length
+      for i in 0...content.length
         last_char = char
-        char = text[i]
+        char = content[i]
         
         # ignore stripping whitespace to preserve shortcuts.
         if is_property_opening?(char)
@@ -118,7 +119,7 @@ module Mincss
   end
 
   # Edit 'style.css' to your CSS file name.
-  filename = 'style.css'
+  filename = 'test_style.css'
   Minimizer::new(filename)
 
   # This code doesn't belong here. Move to separate file in the future.
