@@ -47,11 +47,7 @@ module Mincss
       char = ""
       last_char = ""
       
-      for i in 0...content.length
-        last_char = char
-        char = content[i]
-        
-        # ignore stripping whitespace to preserve shortcuts.
+      content.each_char do |char|        
         if property_opening?(char)
           @inside_property = true
         elsif property_closing?(char)          
@@ -61,7 +57,6 @@ module Mincss
           @inside_property = false
         end
         
-        # ignore stripping whitespace to preserve descendents, etc.
         if selector_opening?(char)
           @inside_selector = true
         elsif selector_closing?(char)
@@ -89,6 +84,8 @@ module Mincss
         else        
           formatted << char
         end
+        
+        last_char = char
       end
            
       formatted
@@ -111,15 +108,15 @@ module Mincss
     end
     
     def newline?(char)
-      char.include? "\n"
+      char == "\n"
     end
     
     def whitespace?(char)
-      char.include? " "
+      char ==  " "
     end
     
     def tab?(char)
-      char.include? "\t"
+      char == "\t"
     end
   end
 
