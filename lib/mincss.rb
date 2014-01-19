@@ -3,6 +3,12 @@ require_relative "./mincss/base"
 
 module Mincss
   class Minimizer
+    
+    SELECTOR_OPENING = "}"
+    SELECTOR_CLOSING = "{"
+    PROPERTY_OPENING = ":"
+    PROPERTY_CLOSING = ";"
+    
   	def initialize(filename)
   		@filename = filename
   		@filename_min = filename.clone.gsub(/(.css)/, '')
@@ -34,7 +40,6 @@ module Mincss
         
     def remove_newlines(content)
       content.gsub!("\n", "")
-      content
     end
     
     def remove_whitespace(content)
@@ -47,9 +52,9 @@ module Mincss
         char = content[i]
         
         # ignore stripping whitespace to preserve shortcuts.
-        if is_property_opening?(char)
+        if property_opening?(char)
           @inside_property = true
-        elsif is_property_closing?(char)          
+        elsif property_closing?(char)          
           if formatted[-1] == " "
             formatted[-1] = ""
           end          
@@ -57,16 +62,16 @@ module Mincss
         end
         
         # ignore stripping whitespace to preserve descendents, etc.
-        if is_selector_opening?(char)
+        if selector_opening?(char)
           @inside_selector = true
-        elsif is_selector_closing?(char)
+        elsif selector_closing?(char)
           if formatted[-1] == " "
             formatted[-1] = ""
           end
           @inside_selector = false
         end
         
-        if is_whitespace?(char)
+        if whitespace?(char)
           
           if @inside_property            
             if last_char == ':'
@@ -89,31 +94,31 @@ module Mincss
       formatted
     end
     
-    def is_selector_opening?(char)
-      char.include?("}") && !@inside_property
+    def selector_opening?(char)
+      char == SELECTOR_OPENING && !@inside_property
     end
     
-    def is_selector_closing?(char)
-      char.include?("{") && !@inside_property
+    def selector_closing?(char)
+      char == SELECTOR_CLOSING && !@inside_property
     end
     
-    def is_property_opening?(char)
-      char.include? ":"
+    def property_opening?(char)
+      char == PROPERTY_OPENING
     end
     
-    def is_property_closing?(char)
-      char.include? ";"
+    def property_closing?(char)
+      char == PROPERTY_CLOSING
     end
     
-    def is_newline?(char)
+    def newline?(char)
       char.include? "\n"
     end
     
-    def is_whitespace?(char)
+    def whitespace?(char)
       char.include? " "
     end
     
-    def is_tab?(char)
+    def tab?(char)
       char.include? "\t"
     end
   end
