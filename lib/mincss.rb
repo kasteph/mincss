@@ -4,10 +4,13 @@ require_relative "./mincss/base"
 module Mincss
   class Minimizer
     
-    SELECTOR_OPENING = "}"
-    SELECTOR_CLOSING = "{"
-    PROPERTY_OPENING = ":"
-    PROPERTY_CLOSING = ";"
+    SELECTOR_OPENING  = "}"
+    SELECTOR_CLOSING  = "{"
+    SELECTOR_COMMA    = ","
+    PROPERTY_OPENING  = ":"
+    PROPERTY_CLOSING  = ";"
+    WHITESPACE        = " "
+    EMPTY             = ""
     
   	def initialize(filename)
   		@filename = filename
@@ -42,6 +45,19 @@ module Mincss
       content.gsub!("\n", "")
     end
     
+    def preserve_whitespace(content, char)
+      if property_opening?(char)
+        
+      elsif selector_opening?(char)
+        
+      end
+      
+      if property_closing?(char) || selector_closing
+
+
+      end
+    end
+    
     def remove_whitespace(content)
       formatted = ""
       char = ""
@@ -51,8 +67,8 @@ module Mincss
         if property_opening?(char)
           @inside_property = true
         elsif property_closing?(char)          
-          if formatted[-1] == " "
-            formatted[-1] = ""
+          if formatted[-1] == WHITESPACE
+            formatted[-1] = EMPTY
           end          
           @inside_property = false
         end
@@ -60,14 +76,16 @@ module Mincss
         if selector_opening?(char)
           @inside_selector = true
         elsif selector_closing?(char)
-          if formatted[-1] == " "
-            formatted[-1] = ""
+          if formatted[-1] == WHITESPACE
+            formatted[-1] = EMPTY
           end
           @inside_selector = false
         end
         
-        if whitespace?(char)
-          
+        # content = preserve_whitespace(content, char)
+
+        
+        if whitespace?(char)          
           if @inside_property            
             if last_char == ':'
               formatted << ""
@@ -75,7 +93,7 @@ module Mincss
               formatted << char
             end
           elsif @inside_selector
-            if last_char == "{" || last_char == ","
+            if last_char == SELECTOR_CLOSING || last_char == SELECTOR_COMMA
               formatted << ""
             else
               formatted << char
@@ -89,6 +107,10 @@ module Mincss
       end
            
       formatted
+    end
+    
+    def last_char(content)
+      content[-1]
     end
     
     def selector_opening?(char)
